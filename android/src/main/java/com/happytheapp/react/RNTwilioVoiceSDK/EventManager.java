@@ -1,6 +1,6 @@
 package com.happytheapp.react.RNTwilioVoiceSDK;
 
-import androidx.annotation.Nullable;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -26,12 +26,10 @@ public class EventManager {
 
     public void sendEvent(String eventName, @Nullable WritableMap params) {
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, "sendEvent "+eventName+" params "+params);
+            Log.d(TAG, "sendEvent " + eventName + " params " + params);
         }
         if (mContext.hasActiveCatalystInstance()) {
-            mContext
-                .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class)
-                .emit(eventName, params);
+            mContext.getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter.class).emit(eventName, params);
         } else {
             if (BuildConfig.DEBUG) {
                 Log.d(TAG, "failed Catalyst instance not active");

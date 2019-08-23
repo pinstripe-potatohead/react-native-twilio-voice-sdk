@@ -4,7 +4,7 @@ import android.media.AudioManager;
 
 import android.util.Log;
 
-import androidx.annotation.NonNull;
+import android.support.annotation.NonNull;
 
 import com.facebook.react.bridge.LifecycleEventListener;
 import com.facebook.react.bridge.ReadableMap;
@@ -33,7 +33,6 @@ import static com.happytheapp.react.RNTwilioVoiceSDK.EventManager.EVENT_CONNECT_
 import static com.happytheapp.react.RNTwilioVoiceSDK.EventManager.EVENT_RECONNECTING;
 import static com.happytheapp.react.RNTwilioVoiceSDK.EventManager.EVENT_RECONNECTED;
 import static com.happytheapp.react.RNTwilioVoiceSDK.EventManager.EVENT_DISCONNECTED;
-
 
 public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements LifecycleEventListener {
 
@@ -64,7 +63,7 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
         /*
          * Enable changing the volume using the up/down keys during a conversation
          */
-        if(getCurrentActivity() != null ) {
+        if (getCurrentActivity() != null) {
             getCurrentActivity().setVolumeControlStream(AudioManager.STREAM_VOICE_CALL);
         }
     }
@@ -72,7 +71,7 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
     @Override
     public void onHostPause() {
         // the library needs to listen for events even when the app is paused
-//        unregisterReceiver();
+        // unregisterReceiver();
     }
 
     @Override
@@ -87,13 +86,12 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
         return TAG;
     }
 
-
     private Call.Listener callListener() {
         return new Call.Listener() {
             @Override
             public void onConnected(@NonNull Call call) {
                 if (BuildConfig.DEBUG) {
-                    Log.d(TAG, "CALL CONNECTED callListener().onConnected call state = "+call.getState());
+                    Log.d(TAG, "CALL CONNECTED callListener().onConnected call state = " + call.getState());
                 }
                 activeCall = call;
                 eventManager.sendEvent(EVENT_CONNECTED, paramsFromCall(call));
@@ -154,15 +152,14 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
         };
     }
 
-
     @ReactMethod
     public void connect(final String accessToken, ReadableMap params, Promise promise) {
         if (BuildConfig.DEBUG) {
-            Log.d(TAG, "connect params: "+params);
+            Log.d(TAG, "connect params: " + params);
         }
 
         if (activeCall != null) {
-            promise.reject("already_connected","Calling connect while a call is connected");
+            promise.reject("already_connected", "Calling connect while a call is connected");
         }
 
         // create parameters for call
@@ -172,27 +169,26 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
             String key = iterator.nextKey();
             ReadableType readableType = params.getType(key);
             switch (readableType) {
-                case Null:
-                    twiMLParams.put(key, "");
-                    break;
-                case Boolean:
-                    twiMLParams.put(key, String.valueOf(params.getBoolean(key)));
-                    break;
-                case Number:
-                    // Can be int or double.
-                    twiMLParams.put(key, String.valueOf(params.getDouble(key)));
-                    break;
-                case String:
-                    twiMLParams.put(key, params.getString(key));
-                    break;
-                default:
-                    Log.d(TAG, "Could not convert with key: " + key + ".");
-                    break;
+            case Null:
+                twiMLParams.put(key, "");
+                break;
+            case Boolean:
+                twiMLParams.put(key, String.valueOf(params.getBoolean(key)));
+                break;
+            case Number:
+                // Can be int or double.
+                twiMLParams.put(key, String.valueOf(params.getDouble(key)));
+                break;
+            case String:
+                twiMLParams.put(key, params.getString(key));
+                break;
+            default:
+                Log.d(TAG, "Could not convert with key: " + key + ".");
+                break;
             }
         }
 
-        ConnectOptions connectOptions = new ConnectOptions.Builder(accessToken)
-                .params(twiMLParams)
+        ConnectOptions connectOptions = new ConnectOptions.Builder(accessToken).params(twiMLParams)
                 // .iceOptions()
                 // .preferAudioCodecs()
                 // .enableInsights()
@@ -233,12 +229,12 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
     public void getActiveCall(Promise promise) {
         if (activeCall != null) {
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "Active call found state = "+activeCall.getState());
+                Log.d(TAG, "Active call found state = " + activeCall.getState());
             }
             promise.resolve(paramsFromCall(activeCall));
             return;
         }
-        promise.reject("no_call","There was no active call");
+        promise.reject("no_call", "There was no active call");
     }
 
     @ReactMethod
@@ -249,7 +245,7 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
     // region create JSObjects helpers
     private WritableMap paramsFromCall(Call call) {
         WritableMap params = Arguments.createMap();
-        if(call != null) {
+        if (call != null) {
             if (call.getSid() != null) {
                 params.putString("sid", call.getSid());
             }
@@ -267,8 +263,8 @@ public class TwilioVoiceSDKModule extends ReactContextBaseJavaModule implements 
     private WritableMap paramsWithError(Call call, CallException error) {
         WritableMap params = paramsFromCall(call);
         if (error != null) {
-            Log.e(TAG, String.format("CallListener onDisconnected error: %d, %s",
-                    error.getErrorCode(), error.getMessage()));
+            Log.e(TAG, String.format("CallListener onDisconnected error: %d, %s", error.getErrorCode(),
+                    error.getMessage()));
             WritableMap errorParams = Arguments.createMap();
             errorParams.putInt("code", error.getErrorCode());
             errorParams.putString("message", error.getLocalizedMessage());

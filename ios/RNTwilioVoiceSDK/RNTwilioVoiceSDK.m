@@ -5,8 +5,8 @@
 #import "RNTwilioVoiceSDK.h"
 #import <React/RCTLog.h>
 
-@import AVFoundation;
 @import TwilioVoice;
+@import AVFoundation;
 
 @interface RNTwilioVoiceSDK () <TVOCallDelegate>
 
